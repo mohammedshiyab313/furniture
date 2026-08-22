@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FurniCraft | Furniture & Business Solutions</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f4ef;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        /* NAVBAR */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #21170f;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #d9a441;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            color: #d9a441;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding: 60px 7%;
+            background:
+                linear-gradient(rgba(20,12,7,.65), rgba(20,12,7,.65)),
+                url("https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1600&q=80");
+
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 700px;
+        }
+
+        .hero h1 {
+            font-size: clamp(42px, 7vw, 80px);
+            line-height: 1.05;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            color: #d9a441;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #eee;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #d9a441;
+            color: #21170f;
+            padding: 14px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #d9a441;
+            color: white;
+        }
+
+        /* GENERAL */
+
+        section {
+            padding: 80px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #666;
+        }
+
+        /* SERVICES */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.08);
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        .card p {
+            color: #666;
+        }
+
+        /* FURNITURE */
+
+        .products {
+            background: #eee9e1;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .product img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 22px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 8px;
+        }
+
+        /* BUSINESS IDEA */
+
+        .idea {
+            background: #21170f;
+            color: white;
+            text-align: center;
+        }
+
+        .idea h2 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .idea p {
+            max-width: 750px;
+            margin: auto;
+            color: #ddd;
+            font-size: 18px;
+        }
+
+        .idea-box {
+            margin: 35px auto 0;
+            max-width: 800px;
+            padding: 30px;
+            border: 1px solid #d9a441;
+            border-radius: 10px;
+        }
+
+        /* ABOUT */
+
+        .about {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about img {
+            width: 100%;
+            border-radius: 15px;
+        }
+
+        .about h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .about p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        /* CONTACT */
+
+        .contact {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        form {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 130px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: #21170f;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #d9a441;
+            color: #21170f;
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #120c08;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* MOBILE */
+
+        @media(max-width: 800px) {
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin: 0 7px;
+                font-size: 13px;
+            }
+
+            .cards,
+            .product-grid,
+            .about {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                min-height: 80vh;
+            }
+
+            section {
+                padding: 60px 5%;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">FurniCraft</div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#furniture">Furniture</a>
+        <a href="#ideas">Ideas</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+</header>
+
+
+<!-- HOME -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <h1>
+            Furniture Made
+            <span>Your Way.</span>
+        </h1>
+
+        <p>
+            Tell us what furniture you need.
+            We design, create and provide solutions
+            that match your space and your business.
+        </p>
+
+        <a href="#contact" class="btn">
+            Request Furniture
+        </a>
+
+        <a href="#furniture" class="btn btn-outline">
+            Explore
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- SERVICES -->
+
+<section id="services">
+
+    <div class="section-title">
+
+        <h2>What We Do</h2>
+
+        <p>
+            Furniture solutions designed around your needs.
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="icon">🪑</div>
+
+            <h3>Custom Furniture</h3>
+
+            <p>
+                Tell us what you want.
+                We can create furniture according
+                to your requirements, size and style.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🏠</div>
+
+            <h3>Home Furniture</h3>
+
+            <p>
+                Modern furniture solutions for
+                bedrooms, living rooms, kitchens
+                and complete homes.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🏢</div>
+
+            <h3>Business Furniture</h3>
+
+            <p>
+                Furniture for offices, shops,
+                restaurants, hotels and other
+                business spaces.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FURNITURE -->
+
+<section class="products" id="furniture">
+
+    <div class="section-title">
+
+        <h2>Our Furniture</h2>
+
+        <p>Some ideas for your next project.</p>
+
+    </div>
+
+
+    <div class="product-grid">
+
+        <div class="product">
+
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80">
+
+            <div class="product-info">
+
+                <h3>Modern Sofa</h3>
+
+                <p>
+                    Comfortable and stylish furniture
+                    for modern living spaces.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="product">
+
+            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80">
+
+            <div class="product-info">
+
+                <h3>Premium Bedroom</h3>
+
+                <p>
+                    Elegant bedroom furniture designed
+                    for comfort and style.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="product">
+
+            <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80">
+
+            <div class="product-info">
+
+                <h3>Office Setup</h3>
+
+                <p>
+                    Professional furniture for productive
+                    business environments.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- BUSINESS IDEAS -->
+
+<section class="idea" id="ideas">
+
+    <h2>💡 A Good Idea Can Grow Your Business</h2>
+
+    <p>
+        Furniture is not only about making a space beautiful.
+        The right furniture can improve customer experience,
+        employee productivity and your brand image.
+    </p>
+
+
+    <div class="idea-box">
+
+        <h3>Our Approach</h3>
+
+        <p>
+            We don't simply provide furniture.
+            We understand your space, your customers
+            and your business goals — then suggest
+            practical furniture solutions.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section>
+
+    <div class="about">
+
+        <img
+        src="https://images.unsplash.com/photo-1558997519-83ea9252edf8?auto=format&fit=crop&w=1000&q=80"
+        >
+
+        <div>
+
+            <h2>Why Choose Us?</h2>
+
+            <p>
+                Every business and every home is different.
+                That's why we don't believe in one-size-fits-all
+                furniture.
+            </p>
+
+            <p>
+                You tell us your requirement.
+                We listen, suggest and provide a solution
+                that fits your needs.
+            </p>
+
+            <p>
+                <strong>
+                    Your idea. Our craftsmanship.
+                </strong>
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CONTACT -->
+
+<section id="contact">
+
+    <div class="section-title">
+
+        <h2>Tell Us What You Want</h2>
+
+        <p>
+            Have an idea? Let's create it together.
+        </p>
+
+    </div>
+
+
+    <div class="contact">
+
+        <form id="contactForm">
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Your Name"
+                required
+            >
+
+            <input
+                type="tel"
+                id="phone"
+                placeholder="Phone Number"
+                required
+            >
+
+            <select id="type">
+
+                <option value="">
+                    What do you need?
+                </option>
+
+                <option>Home Furniture</option>
+                <option>Office Furniture</option>
+                <option>Shop Furniture</option>
+                <option>Restaurant Furniture</option>
+                <option>Custom Furniture</option>
+
+            </select>
+
+
+            <textarea
+                id="message"
+                placeholder="Tell us what furniture you want..."
+                required
+            ></textarea>
+
+
+            <button type="submit">
+                Send Request
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>
+        © 2026 FurniCraft. All Rights Reserved.
+    </p>
+
+    <p>
+        Furniture • Design • Business Solutions
+    </p>
+
+    <p>
+        Location: Jarigebail
+    </p>
+
+</footer>
+
+
+<script>
+
+    const form = document.getElementById("contactForm");
+
+    form.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const name =
+            document.getElementById("name").value;
+
+        alert(
+            "Thank you, " +
+            name +
+            "! Your furniture request has been received."
+        );
+
+        form.reset();
+
+    });
+
+</script>
+
+</body>
+</html>
