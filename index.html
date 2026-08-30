@@ -193,12 +193,13 @@
             overflow: hidden;
             z-index: 1;
             pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
+        /* Both videos stack in exactly the same space via position:absolute.
+           display:none on the inactive one then has zero layout side-effects. */
         .hero-bg-video-wrapper video {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -1084,6 +1085,22 @@
             }
         }
 
+        /* Video visibility toggle — desktop (>900px) vs mobile/tablet (≤900px)
+           Specificity: .hero-bg-video-wrapper .hero-video-* = 0,2,1
+           beats .hero-bg-video-wrapper video = 0,1,1 so display:none wins correctly */
+        .hero-bg-video-wrapper .hero-video-mobile {
+            display: none;
+        }
+
+        @media(max-width:900px) {
+            .hero-bg-video-wrapper .hero-video-desktop {
+                display: none;
+            }
+            .hero-bg-video-wrapper .hero-video-mobile {
+                display: block;
+            }
+        }
+
         @media(max-width:600px) {
             .announcement {
                 font-size: 10px
@@ -1312,7 +1329,9 @@
             <div class="hero-sticky-container">
                 <!-- Full Background Video & Dual-Side Vignette -->
                 <div class="hero-bg-video-wrapper">
+                    <!-- Desktop video (hidden on mobile) -->
                     <video id="heroAssemblyVideo"
+                           class="hero-video-desktop"
                            src="Furniture_assembly_video.mp4"
                            preload="auto"
                            muted
@@ -1321,6 +1340,18 @@
                            disablepictureinpicture
                            disableremoteplayback
                            aria-label="Scroll-driven furniture assembly background animation">
+                    </video>
+                    <!-- Mobile-only video -->
+                    <video id="heroAssemblyVideoMobile"
+                           class="hero-video-mobile"
+                           src="mobile-view-Furniture_assembly_video_animation.mp4"
+                           preload="auto"
+                           muted
+                           playsinline
+                           webkit-playsinline
+                           disablepictureinpicture
+                           disableremoteplayback
+                           aria-label="Scroll-driven furniture assembly mobile background animation">
                     </video>
                     <div class="hero-bg-gradient-overlay"></div>
                 </div>
@@ -1743,17 +1774,26 @@
         /* --- Scroll-Driven Furniture Assembly Video & 4-Stage Cinematic Engine --- */
         (function initFurnitureAssemblyOpenStage() {
             const wrapper = document.getElementById('heroScrollWrapper');
-            const video = document.getElementById('heroAssemblyVideo');
+            const videoDesktop = document.getElementById('heroAssemblyVideo');
+            const videoMobile  = document.getElementById('heroAssemblyVideoMobile');
             const progressBar = document.getElementById('assemblyProgressBar');
             const percentText = document.getElementById('assemblyPercent');
             const leftPhases = document.querySelectorAll('.left-phase');
             const rightPhases = document.querySelectorAll('.right-phase');
             const stepPills = document.querySelectorAll('.step-pill');
 
-            if (!wrapper || !video) return;
+            if (!wrapper || (!videoDesktop && !videoMobile)) return;
 
-            let videoDuration = 8.083; // Exact duration of Furniture_assembly_video.mp4
-            let isMetadataReady = false;
+            // Pick the active video based on current viewport width
+            // ≤900px = mobile/tablet → mobile video; >900px = desktop/laptop → desktop video
+            function getActiveVideo() {
+                return window.innerWidth <= 900 ? videoMobile : videoDesktop;
+            }
+
+            let video = getActiveVideo();
+            let videoDuration = 8.083; // fallback; overridden once metadata loads per-video
+            // Each video tracks its own readiness independently to avoid cross-blocking
+            const readyMap = new Map();
             let targetVideoTime = 0;
             let currentVideoTime = 0;
             let isRafRunning = false;
@@ -1767,33 +1807,50 @@
                 wrapper.style.minHeight = `${window.innerHeight * 4}px`;
             }
 
-            function onMetadataLoaded() {
-                if (video.duration && !isNaN(video.duration) && video.duration > 0) {
-                    videoDuration = video.duration;
+            function attachMetadataListeners(vid) {
+                // Each video has its own ready flag in readyMap
+                if (readyMap.get(vid)) return; // already attached & ready
+
+                function onMetadataLoaded() {
+                    if (readyMap.get(vid)) return; // already handled
+                    readyMap.set(vid, true);
+                    if (vid.duration && !isNaN(vid.duration) && vid.duration > 0) {
+                        // Only set the live duration when this is the currently active video
+                        if (vid === getActiveVideo()) videoDuration = vid.duration;
+                    }
+                    updateScrollRunway();
+                    try { vid.currentTime = 0.001; } catch (e) {}
+                    if (vid === getActiveVideo()) requestUpdate(true);
                 }
-                isMetadataReady = true;
-                updateScrollRunway();
 
-                try {
-                    video.currentTime = 0.001;
-                } catch (e) {}
-
-                requestUpdate(true);
+                if (vid.readyState >= 1) {
+                    onMetadataLoaded();
+                } else {
+                    vid.addEventListener('loadedmetadata', onMetadataLoaded, { once: true });
+                    vid.addEventListener('loadeddata',     onMetadataLoaded, { once: true });
+                    vid.addEventListener('canplay',        onMetadataLoaded, { once: true });
+                }
+                vid.load();
             }
 
-            if (video.readyState >= 1) {
-                onMetadataLoaded();
-            } else {
-                video.addEventListener('loadedmetadata', onMetadataLoaded, { once: true });
-                video.addEventListener('loadeddata', () => {
-                    if (!isMetadataReady) onMetadataLoaded();
-                }, { once: true });
-                video.addEventListener('canplay', () => {
-                    if (!isMetadataReady) onMetadataLoaded();
-                }, { once: true });
-            }
+            // Preload both videos — each tracks its own readiness independently
+            if (videoDesktop) attachMetadataListeners(videoDesktop);
+            if (videoMobile)  attachMetadataListeners(videoMobile);
 
-            video.load();
+            // Sync the active video reference and duration when resizing across the 600 px breakpoint
+            function syncActiveVideo() {
+                const next = getActiveVideo();
+                if (next !== video) {
+                    video = next;
+                    if (video.duration && !isNaN(video.duration) && video.duration > 0) {
+                        videoDuration = video.duration;
+                        requestUpdate(true);
+                    } else {
+                        // Metadata not yet loaded for this video — attach listeners if needed
+                        attachMetadataListeners(video);
+                    }
+                }
+            }
 
             function calculateScrollProgress() {
                 const rect = wrapper.getBoundingClientRect();
@@ -1910,6 +1967,7 @@
 
             window.addEventListener('scroll', () => requestUpdate(false), { passive: true });
             window.addEventListener('resize', () => {
+                syncActiveVideo();
                 updateScrollRunway();
                 requestUpdate(false);
             }, { passive: true });
